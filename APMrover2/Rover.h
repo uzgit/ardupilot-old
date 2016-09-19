@@ -376,6 +376,7 @@ private:
     static const uint32_t i2c_buffer_length = 19;
     char i2c_buffer[ i2c_buffer_length ];
     double test_variable;
+    bool new_data_received = false;
 
 private:
     // private member functions

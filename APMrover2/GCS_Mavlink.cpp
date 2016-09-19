@@ -1653,13 +1653,15 @@ void Rover::send_external_data(mavlink_channel_t chan)
 {
     test_variable ++;
     mavlink_msg_external_data_send(chan, test_variable);
-//    gcs_send_text(MAV_SEVERITY_WARNING, "right after call to mavlink_msg_external_data_send");
+    //gcs_send_text(MAV_SEVERITY_WARNING, i2c_buffer);
 }
 
 void Rover::gcs_send_external_data(void)
 {
     gcs_send_message(MSG_EXTERNAL_DATA);
-    gcs_send_text(MAV_SEVERITY_INFO, "Just sent external data");
+    gcs_send_text(MAV_SEVERITY_INFO, i2c_buffer);
+    
+    new_data_received = false;
 }
 
 //********************************************************************

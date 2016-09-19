@@ -150,4 +150,6 @@ void Rover::read_external_data(void)
     }
     
     delete local_buffer;
+
+    new_data_received = true;
 }
