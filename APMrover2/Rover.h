@@ -372,6 +372,11 @@ private:
     // Store the time the last GPS message was received.
     uint32_t last_gps_msg_ms{0}; 
 
+    //buffer for reading external sensor information via i2c
+    static const uint32_t i2c_buffer_length = 19;
+    char i2c_buffer[ i2c_buffer_length ];
+    double test_variable;
+
 private:
     // private member functions
     void ahrs_update();
@@ -521,6 +526,12 @@ private:
     bool motor_active();
     void update_home();
     void accel_cal_update(void);
+
+    //void test_message(void);
+    void read_external_data(void);
+    void send_external_data(mavlink_channel_t chan);
+    void gcs_send_external_data(void);
+
 public:
     bool print_log_menu(void);
     int8_t dump_log(uint8_t argc, const Menu::arg *argv);

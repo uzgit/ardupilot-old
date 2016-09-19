@@ -582,6 +582,14 @@ bool GCS_MAVLINK_Rover::try_send_message(enum ap_message id)
         rover.compass.send_mag_cal_report(chan);
         break;
 
+//*************************************************************************************
+//  Stuff I've added
+
+    case MSG_EXTERNAL_DATA:
+	rover.send_external_data(chan);
+	break;
+//*************************************************************************************
+
     case MSG_RETRY_DEFERRED:
     case MSG_ADSB_VEHICLE:
     case MSG_TERRAIN:
@@ -1639,3 +1647,19 @@ void Rover::gcs_retry_deferred(void)
     gcs_send_message(MSG_RETRY_DEFERRED);
     GCS_MAVLINK::service_statustext();
 }
+
+//********************************************************************
+void Rover::send_external_data(mavlink_channel_t chan)
+{
+    test_variable ++;
+    mavlink_msg_external_data_send(chan, test_variable);
+//    gcs_send_text(MAV_SEVERITY_WARNING, "right after call to mavlink_msg_external_data_send");
+}
+
+void Rover::gcs_send_external_data(void)
+{
+    gcs_send_message(MSG_EXTERNAL_DATA);
+    gcs_send_text(MAV_SEVERITY_INFO, "Just sent external data");
+}
+
+//********************************************************************
