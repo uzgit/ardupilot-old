@@ -130,26 +130,15 @@ void Rover::button_update(void)
 
 void Rover::read_external_data(void)
 {
-/*
-    char buffer[19] = "buffer used";
-    for(int i = 0; i < 19; i ++)
-    {
-	i2c_buffer[i] = buffer[i];
-    }
-*/
-
-//    hal.i2c->read(7, 19, i2c_buffer);
-    //AP_HAL::OwnPtr<AP_HAL::I2CDevice> arduino = hal.i2c_mgr->get_device(0, 7);
     uint8_t * local_buffer;
     local_buffer = new uint8_t[19];
     AP_HAL::OwnPtr<AP_HAL::I2CDevice> arduino = hal.i2c_mgr->get_device(1, 7);
-    arduino->transfer(nullptr, 0, local_buffer, i2c_buffer_length);
-    for(uint32_t i = 0; i < i2c_buffer_length; i ++)
+    if( arduino->transfer(nullptr, 0, local_buffer, i2c_buffer_length) )
     {
-	i2c_buffer[i] = local_buffer[i];
+	for(uint32_t i = 0; i < i2c_buffer_length; i ++)
+	    i2c_buffer[i] = local_buffer[i];
+	new_data_received = true;
     }
-    
-    delete local_buffer;
 
-    new_data_received = true;
+    delete local_buffer;
 }
