@@ -15,10 +15,7 @@
 	url = git://github.com/google/benchmark.git
 [submodule "modules/mavlink"]
 	path = modules/mavlink
-	url = https://github.com/uzgit/mavlink
+	url = git://github.com/uzgit/mavlink
 [submodule "gtest"]
 	path = modules/gtest
 	url = git://github.com/ArduPilot/googletest
-[submodule "mavlink"]
-	path = modules/mavlink
-	url = https://github.com/uzgit/mavlink
