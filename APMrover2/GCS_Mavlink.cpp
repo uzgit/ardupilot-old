@@ -1653,6 +1653,7 @@ void Rover::send_external_data(mavlink_channel_t chan)
 {
     test_variable ++;
     mavlink_msg_external_data_send(chan, test_variable);
+    mavlink_msg_battery2_send(chan, (uint16_t)test_variable, (uint16_t)test_variable);
     //gcs_send_text(MAV_SEVERITY_WARNING, i2c_buffer);
 }
 
