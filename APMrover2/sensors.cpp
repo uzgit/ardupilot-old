@@ -130,6 +130,8 @@ void Rover::button_update(void)
 
 void Rover::read_external_data(void)
 {
+
+/*
     uint8_t * local_buffer;
     local_buffer = new uint8_t[19];
     AP_HAL::OwnPtr<AP_HAL::I2CDevice> arduino = hal.i2c_mgr->get_device(1, 7);
@@ -141,4 +143,40 @@ void Rover::read_external_data(void)
     }
 
     delete local_buffer;
+*/
+    int local_buffer_length = 24;
+    uint8_t local_buffer[24];
+    char char_buffer[24];
+
+    char * buffer;
+    float values[5];
+    int battery_status = 9999;
+
+    AP_HAL::OwnPtr<AP_HAL::I2CDevice> arduino = hal.i2c_mgr->get_device(1, 7);
+
+        if( arduino->transfer(nullptr, 0, local_buffer, local_buffer_length) )
+	{
+		int i;
+		for(i = 0; i < 24; i ++)
+		{
+			char_buffer[i] = local_buffer[i];
+		}	
+		
+		new_data_received = true;
+		for(i = 0; i < 5; i ++)
+		{
+			buffer = char_buffer + 4*i;
+			values[i] = atof(buffer);
+		}
+
+		buffer = char_buffer + 20;
+		battery_status = atoi(buffer);
+	}
+
+	i2c_buffer.voltage = values[0];
+	i2c_buffer.current = values[1];
+	i2c_buffer.air_temperature = values[2];
+	i2c_buffer.water_temperature = values[3];	
+	i2c_buffer.humidity = values[4];
+	i2c_buffer.battery_status = battery_status;
 }

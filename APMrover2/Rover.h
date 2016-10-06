@@ -373,9 +373,22 @@ private:
     uint32_t last_gps_msg_ms{0}; 
 
     //buffer for reading external sensor information via i2c
-    static const uint32_t i2c_buffer_length = 19;
-    char i2c_buffer[ i2c_buffer_length ];
-    double test_variable;
+    //static const uint32_t i2c_buffer_length = 24;
+    //char i2c_buffer[ i2c_buffer_length ];
+
+    struct DAB_DATA
+    {
+	    float voltage;
+	    float current;
+	    float air_temperature;
+	    float water_temperature;
+	    float humidity;
+	    int   battery_status;
+    };
+
+    DAB_DATA i2c_buffer;
+
+    //double test_variable;
     bool new_data_received = false;
 
 private:

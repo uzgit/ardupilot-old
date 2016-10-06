@@ -1651,10 +1651,13 @@ void Rover::gcs_retry_deferred(void)
 //********************************************************************
 void Rover::send_external_data(mavlink_channel_t chan)
 {
-    test_variable ++;
-    mavlink_msg_external_data_send(chan, test_variable);
+//    test_variable ++;
+//    mavlink_msg_external_data_send(chan, test_variable);
 //    mavlink_msg_battery2_send(chan, (uint16_t)test_variable, (uint16_t)test_variable);
     //gcs_send_text(MAV_SEVERITY_WARNING, i2c_buffer);
+
+    mavlink_msg_external_data_send(chan, i2c_buffer.voltage, i2c_buffer.current, i2c_buffer.air_temperature, i2c_buffer.water_temperature, i2c_buffer.humidity, i2c_buffer.battery_status);
+
 }
 
 void Rover::gcs_send_external_data(void)
@@ -1663,7 +1666,7 @@ void Rover::gcs_send_external_data(void)
     if(new_data_received)
     {
 	gcs_send_message(MSG_EXTERNAL_DATA);
-//	gcs_send_text(MAV_SEVERITY_INFO, i2c_buffer);
+	//gcs_send_text(MAV_SEVERITY_INFO, sprintf(i2c_buffer.voltage));
     }    
 
     new_data_received = false;
