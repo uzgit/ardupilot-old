@@ -128,6 +128,13 @@ void Rover::button_update(void)
     button.update();
 }
 
+void copy(uint8_t * origin, int offset, int length, uint8_t * destination)
+{
+    int i;
+    for(i = 0; i < length; i ++)
+	    destination[i] = origin[i + offset];
+}
+
 void Rover::read_external_data(void)
 {
 
@@ -142,41 +149,42 @@ void Rover::read_external_data(void)
 	new_data_received = true;
     }
 
-    delete local_buffer;
+    delete [] local_buffer;
 */
-    int local_buffer_length = 24;
-    uint8_t local_buffer[24];
-    char char_buffer[24];
+	int local_buffer_length = 24;
+	uint8_t local_buffer[local_buffer_length];
 
-    char * buffer;
-    float values[5];
-    int battery_status = 9999;
+	union float2bytes { float f; uint8_t b[sizeof(float)]; };
+	float2bytes f2b;
 
-    AP_HAL::OwnPtr<AP_HAL::I2CDevice> arduino = hal.i2c_mgr->get_device(1, 7);
+	union int2bytes { uint32_t i; uint8_t b[sizeof(uint32_t)]; };
+	int2bytes i2b;
+
+  	float values[5];
+   	uint32_t battery_status = 9999;
+
+   	AP_HAL::OwnPtr<AP_HAL::I2CDevice> arduino = hal.i2c_mgr->get_device(1, 7);
 
         if( arduino->transfer(nullptr, 0, local_buffer, local_buffer_length) )
 	{
-		int i;
-		for(i = 0; i < 24; i ++)
-		{
-			char_buffer[i] = local_buffer[i];
-		}	
-		
 		new_data_received = true;
-		for(i = 0; i < 5; i ++)
-		{
-			buffer = char_buffer + 4*i;
-			values[i] = atof(buffer);
-		}
+		
+		copy(local_buffer, 0, 4, f2b.b);
+		i2c_buffer.voltage = f2b.f;
 
-		buffer = char_buffer + 20;
-		battery_status = atoi(buffer);
+		copy(local_buffer, 4, 4, f2b.b);
+		i2c_buffer.current = f2b.f;
+		
+		copy(local_buffer, 8, 4, f2b.b);
+		i2c_buffer.air_temperature = f2b.f;
+	
+		copy(local_buffer, 12, 4, f2b.b);
+		i2c_buffer.water_temperature = f2b.f;	
+	
+		copy(local_buffer, 16, 4, f2b.b);
+		i2c_buffer.humidity = f2b.f;
+	
+		copy(local_buffer, 20, 4, i2b.b);
+		i2c_buffer.battery_status = i2b.i;
 	}
-
-	i2c_buffer.voltage = values[0];
-	i2c_buffer.current = values[1];
-	i2c_buffer.air_temperature = values[2];
-	i2c_buffer.water_temperature = values[3];	
-	i2c_buffer.humidity = values[4];
-	i2c_buffer.battery_status = battery_status;
 }
